@@ -2,21 +2,22 @@ package com.example.statystyki;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    Calculator calculator = new Calculator();
-    VBox box;
-    Scene s;
-    Stage stage;
+    private final Calculator calculator = new Calculator();
+    private VBoxPlaceholder box;
+    private Scene s;
+    private Stage stage;
+    private String desc;
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -28,10 +29,14 @@ public class HelloApplication extends Application {
 
     }
     protected void setNewScene(){
-        box = new VBoxPlaceholder(calculator, this);
-        s = new Scene(box, 1050,500);
-        calculator.setData(new String[]{"Jeden","Dwa","Trzy", "cztert"},
-                new long[]{1,2,3, 6});
+
+        desc = calculator.returnDescription();
+        box = new VBoxPlaceholder(calculator, this, desc);
+
+        s = new Scene(box, 1050,700);
+        VBox g = new VBox();
+        g.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        box.getChildren().add(g);
         stage.setScene(s);
     }
 
