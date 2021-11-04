@@ -22,15 +22,13 @@ public class VBoxPlaceholder extends VBox {
         TextField dataFieldString = new TextField(calculator.getDataString());
         dataFieldString.setAlignment(Pos.CENTER);
         dataFieldString.setMinWidth(200);
+        dataFieldString.setOpaqueInsets(new Insets(10,10,10,10));
 
         TextField dataFieldLong = new TextField(calculator.getDataLong());
         dataFieldLong.setAlignment(Pos.CENTER);
         dataFieldLong.setMinWidth(200);
+        dataFieldLong.setOpaqueInsets(new Insets(10,10,10,10));
 
-        VBox whiteBox = new VBox();
-        whiteBox.setMinSize(20,20);
-        VBox whiteBox1 = new VBox();
-        whiteBox1.setMinSize(20,20);
 
 
         Button button = new Button("Przelicz");
@@ -40,15 +38,12 @@ public class VBoxPlaceholder extends VBox {
                         new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                 dataFieldString.setBackground(new Background(
                         new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-                calculator.setData(
-                        dataFieldString.getText().split(","),
-                        Arrays.stream(
-                                        dataFieldLong
-                                                .getText()
-                                                .split(","))
-                                .mapToLong(Long::parseLong)
-                                .toArray()
-                );
+                String[] strings = removeWhitespace(dataFieldString.getText().split(","));
+                long[] longs = Arrays.stream(
+                        removeWhitespace(dataFieldLong.getText().split(",")))
+                        .mapToLong(Long::parseLong).toArray();
+
+                calculator.setData(strings, longs);
                 application.setNewScene();
 
             }catch (Exception ignored){
@@ -59,10 +54,8 @@ public class VBoxPlaceholder extends VBox {
             }
         });
 
-        HBox headerBox = new HBox(field, whiteBox,
-                new Text("Etykiety (oddzielone przecinkiem):"),
-                dataFieldString, whiteBox1,
-                new Text("Dane (oddzielone przecinkiem):"),
+        HBox headerBox = new HBox(field, new Text("Etykiety (oddzielone przecinkiem):"),
+                dataFieldString, new Text("Dane (oddzielone przecinkiem):"),
                 dataFieldLong, button
         );
 
@@ -72,5 +65,17 @@ public class VBoxPlaceholder extends VBox {
     }
     public TextField getField(){
         return field;
+    }
+    private String[] removeWhitespace(String[] s){
+        for (int i = 0; i < s.length; i++) {
+            StringBuilder a = new StringBuilder();
+            for (int j = 0; j < s[i].length(); j++) {
+                if(Character.isDigit(s[i].charAt(j))){
+                    a.append(s[i].charAt(j));
+                }
+            }
+            s[i] = a.toString();
+        }
+        return s;
     }
 }

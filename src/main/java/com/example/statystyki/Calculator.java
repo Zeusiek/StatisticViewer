@@ -12,26 +12,18 @@ import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Predicate;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class Calculator {
     private long[] dataLong;
-    private long maxNumb;
-    private int sum = 550;
-    private long uberSum = 0;
     private double[] percentTable;
     private String[] description;
     private VBox[] boxes;
     private String atr = "Nazwa";
 
-    public String returnDescription(){
-        return atr;
-    }
-    public String getDataLong(){
-        return Arrays.toString(dataLong).substring(1,Arrays.toString(dataLong).length()-1);
-    }
-    public String getDataString(){
-        return Arrays.toString(description).substring(1,Arrays.toString(description).length()-1);
-    }
+
 
     Calculator(){
         setData(new String[]{}, new long[]{});
@@ -46,10 +38,8 @@ public class Calculator {
     }
 
     private void calculate(){
-        if(dataLong.length == 0) maxNumb = 1;
-        else maxNumb = Arrays.stream(dataLong).max().getAsLong();
         percentTable = new double[dataLong.length];
-        uberSum = Arrays.stream(dataLong).sum();
+        long uberSum = Arrays.stream(dataLong).sum();
         for (int i = 0; i < dataLong.length; i++)
             percentTable[i] = (double) dataLong[i]/(double) uberSum;
 
@@ -72,17 +62,44 @@ public class Calculator {
                                     r.nextInt(100)+150),
                     CornerRadii.EMPTY, Insets.EMPTY))
             );
-            boxes[i].setPrefSize(1000d/boxes.length, (percentTable[i]*sum));
-            boxes[i].setMaxHeight((percentTable[i]*sum));
-            boxes[i].setMinHeight((percentTable[i]*sum));
+            int sum = 550;
+            boxes[i].setPrefSize(1000d/boxes.length, (percentTable[i]* sum));
+            boxes[i].setMaxHeight((percentTable[i]* sum));
+            boxes[i].setMinHeight((percentTable[i]* sum));
         }
         return boxes;
     }
+    public String data(){
+        if(dataLong.length == 0) return "";
+        StringBuilder builder = new StringBuilder();
+        long[] sorted = Arrays.stream(dataLong).sorted().toArray();
+
+        builder.append("Średnia: ").append(Arrays.stream(dataLong).average().getAsDouble())
+                .append("\nMaksymalna wartość: ").append(Arrays.stream(dataLong).max().getAsLong())
+                .append("\nMinimalna wartość: ").append(Arrays.stream(dataLong).min().getAsLong());
+
+        if(sorted.length > 1){
+            builder.append("\nMediana: ");
+            if(sorted.length % 2 == 0)
+                builder.append(((double) sorted[(sorted.length-1)/2] + (double)sorted[(sorted.length-1)/2+1])/2);
+            else builder.append(sorted[(sorted.length)/2]);
+        }
+        return builder.toString();
+    }
     public DataBox dataBox(String description){
         atr = description;
-        return new DataBox(boxes, description);
+        return new DataBox(boxes, description, this);
     }
     public DataBox dataBox(){
-        return new DataBox(boxes, "TEST");
+        return new DataBox(boxes, "TEST", this);
+    }
+    public String returnDescription(){
+        return atr;
+    }
+    public String getDataLong(){
+        return Arrays.toString(dataLong).substring(1,Arrays.toString(dataLong).length()-1);
+    }
+    public String getDataString(){
+        return Arrays.toString(description).substring(1,Arrays.toString(description).length()-1);
     }
 }

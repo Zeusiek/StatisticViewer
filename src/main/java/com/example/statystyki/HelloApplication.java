@@ -24,7 +24,7 @@ public class HelloApplication extends Application {
         setNewScene();
         stage.setScene(s);
         stage.setTitle("Statystyki");
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.show();
 
     }
@@ -33,7 +33,7 @@ public class HelloApplication extends Application {
         desc = calculator.returnDescription();
         box = new VBoxPlaceholder(calculator, this, desc);
 
-        s = new Scene(box, 1050,700);
+        s = new Scene(box, 1300,700);
         VBox g = new VBox();
         g.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         box.getChildren().add(g);
