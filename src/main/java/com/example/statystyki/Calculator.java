@@ -24,7 +24,9 @@ public class Calculator {
     private VBox[] boxes;
 
     Calculator(){
-
+        setData(new String[]{"Jeden","Dwa","Trzy"},
+                new long[]{1,2,3}
+        );
     }
     public void setData(String[] description, long[] data){
         if(description.length != data.length)

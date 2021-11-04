@@ -8,6 +8,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Box;
 import javafx.scene.text.Text;
 
+import java.util.Arrays;
+
 public class DataBox extends VBox {
 
     DataBox(VBox[] boxes, String description){
@@ -19,10 +21,12 @@ public class DataBox extends VBox {
             scaleBoxes[i].setAlignment(Pos.CENTER);
             scaleBoxes[i].setPrefSize(50,30);
             scaleBoxes[i].setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+
         }
+        System.out.println(Arrays.toString(scaleBoxes));
         VBox scale = new VBox();
         scale.setAlignment(Pos.BOTTOM_LEFT);
-        scale.getChildren().addAll(scaleBoxes);
+        scale.getChildren().addAll(boxes);
 
         HBox h = new HBox(scale);
         h.getChildren().addAll(boxes);
