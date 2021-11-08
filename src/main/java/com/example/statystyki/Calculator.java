@@ -11,20 +11,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 public class Calculator {
     private long[] dataLong;
     private double[] percentTable;
+    private double[] copyPercent;
     private String[] description;
     private VBox[] boxes;
-    private String atr = "Nazwa";
+    private int mod = 0;
 
-
-
+    private final int sum = 600;
     Calculator(){
         setData(new String[]{}, new long[]{});
     }
@@ -42,7 +46,23 @@ public class Calculator {
         long uberSum = Arrays.stream(dataLong).sum();
         for (int i = 0; i < dataLong.length; i++)
             percentTable[i] = (double) dataLong[i]/(double) uberSum;
+        try{
+            copyPercent = Arrays.stream(percentTable).toArray();
+            double maxD = Arrays.stream(percentTable).max().getAsDouble();
 
+            if(maxD <= 0.30){
+                for (int i = 0; i < percentTable.length; i++) copyPercent[i] *= 2.7;
+                mod = 30;
+            } else if(maxD <= 0.50) {
+                for (int i = 0; i < percentTable.length; i++) copyPercent[i] *= 1.8;
+                mod = 50;
+            } else if(maxD <= 0.70){
+                for (int i = 0; i < percentTable.length; i++) copyPercent[i] *= 1.3;
+                mod = 70;
+            }else{
+                for (int i = 0; i < percentTable.length; i++) copyPercent[i] *= 0.99;
+            }
+        }catch (NoSuchElementException ignore){ }
     }
     private VBox[] show(){
         if(description.length == 0)
@@ -51,7 +71,7 @@ public class Calculator {
         Font f = new Font("Arial", 20);
         boxes = new VBox[description.length];
         for (int i = 0; i < description.length; i++) {
-            Text t = new Text(description[i] + '\n' + dataLong[i]);
+            Text t = new Text(description[i] + '\n' + dataLong[i] + "\n" + (int)(percentTable[i]*100)+"%" );
             t.setFont(f);
             boxes[i] = new VBox(t);
             boxes[i].setAlignment(Pos.CENTER);
@@ -62,13 +82,13 @@ public class Calculator {
                                     r.nextInt(100)+150),
                     CornerRadii.EMPTY, Insets.EMPTY))
             );
-            int sum = 550;
-            boxes[i].setPrefSize(1000d/boxes.length, (percentTable[i]* sum));
-            boxes[i].setMaxHeight((percentTable[i]* sum));
-            boxes[i].setMinHeight((percentTable[i]* sum));
+            boxes[i].setPrefSize(1000d/boxes.length, (copyPercent[i]* sum));
+            boxes[i].setMaxHeight((copyPercent[i]* sum));
+            boxes[i].setMinHeight((copyPercent[i]* sum));
         }
         return boxes;
     }
+
     public String data(){
         if(dataLong.length == 0) return "";
         StringBuilder builder = new StringBuilder();
@@ -81,20 +101,21 @@ public class Calculator {
         if(sorted.length > 1){
             builder.append("\nMediana: ");
             if(sorted.length % 2 == 0)
-                builder.append(((double) sorted[(sorted.length-1)/2] + (double)sorted[(sorted.length-1)/2+1])/2);
+                builder.append(((double) sorted[(sorted.length-1)/2] +
+                        (double)sorted[(sorted.length-1)/2+1])/2);
             else builder.append(sorted[(sorted.length)/2]);
         }
+        builder.append("\nZbiór wartości: ").append(Arrays.toString(dataLong));
         return builder.toString();
     }
-    public DataBox dataBox(String description){
-        atr = description;
-        return new DataBox(boxes, description, this);
-    }
+
+
     public DataBox dataBox(){
-        return new DataBox(boxes, "TEST", this);
+        return new DataBox(boxes,  this);
     }
-    public String returnDescription(){
-        return atr;
+
+    public int getSum() {
+        return sum;
     }
     public String getDataLong(){
         return Arrays.toString(dataLong).substring(1,Arrays.toString(dataLong).length()-1);
@@ -102,4 +123,8 @@ public class Calculator {
     public String getDataString(){
         return Arrays.toString(description).substring(1,Arrays.toString(description).length()-1);
     }
+    public int getMod() {
+        return mod;
+    }
+
 }
