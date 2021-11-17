@@ -1,0 +1,6 @@
+Średnia: 1.5
+Maksymalna wartość: 2
+Minimalna wartość: 1
+Suma: 3
+Mediana: 1.5
+Zbiór wartości: [1, 2]
