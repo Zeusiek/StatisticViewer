@@ -3,6 +3,7 @@ package com.example.statystyki;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 
 public class DataBox extends VBox {
     DataBox(VBox[] boxes, Calculator c){
-
         HBox box = new HBox();
 
         setAlignment(Pos.CENTER_LEFT);
@@ -51,10 +51,16 @@ public class DataBox extends VBox {
         scale.setStyle("-fx-border-style: none none none none; " +
                 "-fx-border-width: 1; -fx-border-color: black;"
         );
+        Button btn = new Button("Generuj raport");
+        btn.setOnMouseClicked(v -> c.generateReport());
+        Button genFile = new Button("Generuj plik");
+        genFile.setOnMouseClicked(v -> c.generateFile());
+
         VBox dataBox = new VBox(new Text("DANE:\n" + c.data()));
         dataBox.setMinSize(220,250);
         dataBox.setMaxSize(220,250);
         VBox.setMargin(dataBox, new Insets(10,10,10,10));
+        dataBox.getChildren().addAll(btn, genFile);
 
         HBox h = new HBox(scale);
         h.getChildren().addAll(boxes);

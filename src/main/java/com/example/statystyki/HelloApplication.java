@@ -13,9 +13,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    private final Calculator calculator = new Calculator();
+    private final Calculator calculator = new Calculator(this);
     private VBoxPlaceholder box;
-    private String atr;
+    private String atr = "Nazwa";
     private Scene s;
     private Stage stage;
     @Override
@@ -40,6 +40,14 @@ public class HelloApplication extends Application {
 
     public void setAtr(String atr) {
         this.atr = atr;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public String getAtr() {
+        return atr;
     }
 
     public static void main(String[] args) {

@@ -10,6 +10,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -27,9 +30,12 @@ public class Calculator {
     private String[] description;
     private VBox[] boxes;
     private int mod = 0;
+    private boolean canRaport = false;
+    private final HelloApplication application;
 
     private final int sum = 600;
-    Calculator(){
+    Calculator(HelloApplication application){
+        this.application = application;
         setData(new String[]{}, new long[]{});
     }
     public void setData(String[] description, long[] data){
@@ -42,6 +48,7 @@ public class Calculator {
     }
 
     private void calculate(){
+
         percentTable = new double[dataLong.length];
         long uberSum = Arrays.stream(dataLong).sum();
         for (int i = 0; i < dataLong.length; i++)
@@ -67,11 +74,12 @@ public class Calculator {
     private VBox[] show(){
         if(description.length == 0)
             return new VBox[]{new VBox()};
+        canRaport = true;
         Random r = new Random();
         Font f = new Font("Arial", 20);
         boxes = new VBox[description.length];
         for (int i = 0; i < description.length; i++) {
-            Text t = new Text(description[i] + '\n' + dataLong[i] + "\n" + (int)(percentTable[i]*100)+"%" );
+            Text t = new Text(description[i] + '\n' + dataLong[i] + "\n" + String.format("%.2f",percentTable[i]*100)+"%");
             t.setFont(f);
             boxes[i] = new VBox(t);
             boxes[i].setAlignment(Pos.CENTER);
@@ -88,7 +96,6 @@ public class Calculator {
         }
         return boxes;
     }
-
     public String data(){
         if(dataLong.length == 0) return "";
         StringBuilder builder = new StringBuilder();
@@ -96,7 +103,8 @@ public class Calculator {
 
         builder.append("Średnia: ").append(Arrays.stream(dataLong).average().getAsDouble())
                 .append("\nMaksymalna wartość: ").append(Arrays.stream(dataLong).max().getAsLong())
-                .append("\nMinimalna wartość: ").append(Arrays.stream(dataLong).min().getAsLong());
+                .append("\nMinimalna wartość: ").append(Arrays.stream(dataLong).min().getAsLong())
+                .append("\nSuma: ").append(Arrays.stream(dataLong).sum());
 
         if(sorted.length > 1){
             builder.append("\nMediana: ");
@@ -109,6 +117,36 @@ public class Calculator {
         return builder.toString();
     }
 
+    public void generateReport(){
+        if(!canRaport) return;
+        File file = new File("Raport-" + application.getAtr()+".txt");
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(data());
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void generateFile(){
+        if(!canRaport) return;
+        File file = new File(application.getAtr()+".txt");
+        try {
+            FileWriter writer = new FileWriter(file);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < dataLong.length; i++)
+                builder.append(description[i])
+                        .append(":")
+                        .append(dataLong[i])
+                        .append("\n");
+            writer.write(builder.toString());
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     public DataBox dataBox(){
         return new DataBox(boxes,  this);
